@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { JWTPayload } from './auth'
+import { JWTPayload } from '@/lib/auth'
 
 export interface AuthenticatedRequest extends NextApiRequest {
   user?: JWTPayload
