@@ -1,0 +1,67 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  role      String   // "custodian" or "consumer"
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationships
+  grantsGiven     ConsentGrant[] @relation("Custodian")
+  grantsReceived  ConsentGrant[] @relation("Consumer")
+  auditLogs       AuditLog[]
+}
+
+model ConsentGrant {
+  id          String    @id @default(uuid())
+  custodianId String
+  consumerId  String
+  purpose     String    // e.g., "medical research", "emergency response"
+  scope       String    // JSON string with data fields allowed
+  expiresAt   DateTime
+  revokedAt   DateTime?
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relationships
+  custodian   User       @relation("Custodian", fields: [custodianId], references: [id])
+  consumer    User       @relation("Consumer", fields: [consumerId], references: [id])
+  auditLogs   AuditLog[]
+
+  @@index([custodianId])
+  @@index([consumerId])
+  @@index([isActive])
+}
+
+model AuditLog {
+  id            String   @id @default(uuid())
+  userId        String
+  consentId     String?
+  action        String   // e.g., "GRANT_CREATED", "GRANT_REVOKED", "DATA_ACCESSED"
+  details       String   // JSON string with additional details
+  ipAddress     String?
+  userAgent     String?
+  timestamp     DateTime @default(now())
+
+  // Relationships
+  user          User          @relation(fields: [userId], references: [id])
+  consent       ConsentGrant? @relation(fields: [consentId], references: [id])
+
+  @@index([userId])
+  @@index([consentId])
+  @@index([timestamp])
+}
