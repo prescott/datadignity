@@ -2,9 +2,9 @@
 
 **Uniting Global Aid Networks + Protecting Data Dignity via Secure Data Federation**
 
-**Status**: Working Draft  
-**Version**: 2.0  
-**Based On**: Roundtable Assessment (February 1, 2026)  
+**Status**: Working Draft (Round 3 Revisions Applied)
+**Version**: 2.1
+**Based On**: Roundtable Assessment Rounds 1-3 (February 1-2, 2026)  
 **Original Document**: Data Dignity Manifesto v1.0 (October 11, 2024)  
 **Issuing Organization**: Trusted Humanitarian Resources (501(c)(3))
 
@@ -986,6 +986,35 @@ Data classification is not static—the same data element may require different 
 
 Organizations must establish procedures for classification review and have authority to elevate classification when circumstances warrant.
 
+#### Classification Elevation Authority
+
+*Addresses R3-9: Specification of who can elevate classification and how quickly.*
+
+**Elevation Authority**:
+
+| Scope | Authority | Approval |
+|-------|-----------|----------|
+| Specific individuals | Data Protection Officer | Immediate; documented within 24 hours |
+| Specific population group | Country Director or equivalent | Immediate; documented within 24 hours |
+| All data of a type (organization-wide) | Chief Data Officer or equivalent | Within 72 hours; Advisory Board notified |
+| Global elevation (all implementing organizations) | Data Dignity Advisory Board | Within 7 days; all implementing organizations notified |
+
+**Elevation Triggers**:
+- Security incident involving data of the type in question
+- Credible threat intelligence indicating adversary interest in specific data
+- Government policy change affecting population (e.g., new deportation orders, citizenship revocation)
+- Outbreak of targeted violence along ethnic, religious, or political lines
+- Physical capture or seizure of data systems in the region
+
+**Emergency Elevation Timeline**:
+- **Immediate** (verbal authorization, documented within 24 hours): When delay could result in physical harm — DPO or Country Director may elevate unilaterally
+- **Standard** (72 hours): When risk is identified but not immediately life-threatening
+- **Global** (7 days): When systemic risk requires coordinated response across organizations
+
+**Notification**: All staff with access to affected data must be notified within 24 hours of any classification elevation. Elevated classification triggers immediate enforcement of the new handling requirements.
+
+**De-escalation**: Classification may only be reduced by the same or higher authority that elevated it, with documented justification and a minimum 30-day waiting period after the triggering condition has resolved.
+
 ### II.3.3 Classification Marking and Handling
 
 All data must be marked with its classification level, and systems must enforce handling requirements:
@@ -1930,6 +1959,28 @@ Consent UX must be validated before deployment:
 - Regular user feedback collection
 - Iterate based on findings
 
+#### Trauma-Informed Design Principles
+
+*Addresses R3-12: Consent UX must account for trauma experienced by displaced populations.*
+
+Consent interfaces must be designed with awareness that many beneficiaries have experienced trauma:
+
+1. **Never require detailed narrative of traumatic events during consent.** Consent processes should not ask why someone is seeking protection or the details of their flight. If this information is needed for case management, it must be collected separately by trained protection staff — not embedded in consent flows.
+
+2. **Allow "prefer not to answer" for all non-essential questions.** No consent choice should require disclosing sensitive personal experiences.
+
+3. **Provide breaks during consent process.** For Tier 2+ consent that takes more than 5 minutes, offer explicit break points ("You can pause here and continue later").
+
+4. **Offer to complete consent over multiple sessions.** Initial registration captures Tier 0/1 only; higher tiers can be addressed in follow-up sessions when the individual is more settled.
+
+5. **Train staff on trauma-informed facilitation.** Staff must recognize signs of distress during consent and know how to pause, offer support, and reschedule without pressure.
+
+6. **Avoid imagery that may trigger trauma responses.** No images of conflict, displacement, or distress in consent materials. Use neutral, calming visual design.
+
+7. **Ensure private, calm consent environment.** Consent should not occur in crowded, noisy, or chaotic settings. Designate quiet spaces for consent conversations.
+
+**Validation**: Consent UX must be reviewed by a trauma-informed care specialist before deployment. Specialist must confirm that the consent flow does not re-traumatize or require disclosure of traumatic experiences.
+
 ### Smart Contract Specifications
 
 Consent choices are encoded in smart contracts that automatically enforce permissions:
@@ -2631,9 +2682,33 @@ Patterns in consent behavior that may indicate duress:
 - **Repeated access without change**: Individual accesses consent interface multiple times but makes no changes (possible coerced attempt)
 - **Immediate acceptance**: Consent given immediately upon first explanation with no questions (may indicate perceived pressure)
 
-System response to behavioral indicators:
+#### Duress Scoring Thresholds
 
-- Flag for human review
+*Addresses R3-8: Specific thresholds required for consistent duress flagging across staff and operations.*
+
+Contextual and behavioral indicators are assigned weights for systematic evaluation:
+
+| Indicator | Weight | Notes |
+|-----------|--------|-------|
+| Third party present and answering for individual | 3 | Strong indicator of external control |
+| Detention setting | 4 | Assume duress; minimal collection only |
+| Rushed consent (<2 minutes for Tier 2+) | 2 | Time pressure may indicate coercion |
+| Changed answers during consent session | 2 | Possible coaching or correction by coercer |
+| Non-verbal distress signals (staff-observed) | 2 | Requires staff training on recognition |
+| Sudden blanket consent changes | 2 | All permissions granted/revoked at once |
+| Active conflict in registration area | 2 | Contextual elevation |
+| Time of day (outside normal operational hours) | 1 | Weak indicator; contextual |
+| Location (non-standard venue for consent) | 1 | Contextual |
+| Immediate acceptance with no questions | 1 | May indicate perceived pressure |
+
+**Flagging Threshold**: Total score ≥ 4 → automatic flag for supervisor review within 24 hours
+**Immediate Escalation Threshold**: Total score ≥ 6 → supervisor involvement before completing consent; private re-consent scheduled within 48 hours
+
+**Calibration**: Thresholds must be validated through field testing during pilot deployments and adjusted based on false positive/negative rates. Target: <10% false positive rate, <5% false negative rate for acute coercion scenarios.
+
+System response to all flagged indicators:
+
+- Flag for human review per thresholds above
 - Outreach to offer private consent review
 - No negative consequences (individual may have legitimate reasons)
 
@@ -3093,10 +3168,35 @@ The following proof types are specified for humanitarian use:
 
 **Circuit Auditing**
 
-- All ZKP circuits must be audited by qualified cryptographers
-- Audits must verify correctness (valid proofs only for true statements)
-- Audits must verify soundness (cannot create valid proofs for false statements)
-- Audit reports published for transparency
+*Addresses R3-7: Auditor qualification and ecosystem specification.*
+
+All ZKP circuits must be audited by qualified cryptographers before production deployment.
+
+**Auditor Qualifications** (must meet at least one):
+- Published peer-reviewed cryptographic research in a recognized venue (CRYPTO, EUROCRYPT, CCS, IEEE S&P, or equivalent) OR
+- Professional certification from a recognized institution (e.g., IACR membership with demonstrated ZKP expertise) AND demonstrated ZKP audit experience (at least 2 prior circuit audits)
+- Employed by a recognized security audit firm with established ZKP practice (e.g., Trail of Bits, NCC Group, OpenZeppelin, or equivalent)
+
+**Audit Scope Requirements**:
+- **Correctness**: Valid proofs can only be generated for true statements
+- **Soundness**: It is computationally infeasible to create valid proofs for false statements
+- **Zero-knowledge**: Proofs reveal nothing beyond the truth of the statement
+- **Implementation review**: Circuit code matches specification; no implementation bugs
+- **Side-channel analysis**: Timing leaks, memory access patterns assessed for privacy
+
+**Audit Report Template**:
+1. Circuit description and intended functionality
+2. Proof system and parameters used
+3. Correctness analysis with formal or semi-formal argument
+4. Soundness analysis with security parameter assessment
+5. Zero-knowledge property verification
+6. Implementation review findings
+7. Recommendations and required fixes
+8. Auditor attestation and signature
+
+**Auditor Registry**: The Data Dignity Advisory Board maintains a registry of pre-qualified auditors. Organizations may use auditors not on the registry if they provide evidence meeting the qualification criteria above.
+
+Audit reports must be published for transparency (redacting only specific implementation details that could aid attackers)
 
 **Trusted Setup (where required)**
 
@@ -3128,12 +3228,31 @@ Cryptographic keys underpin all security measures. Proper key management is esse
 
 **Key Generation Ceremonies**
 
-For organizational or shared keys:
+*Addresses R3-6: Detailed ceremony procedures required for organizational key generation.*
 
-- Multi-party generation (no single party knows full key)
-- Witnessed ceremonies with documented procedures
-- Split knowledge: key shares held by different individuals
-- Audit trail of all generation events
+For organizational or shared keys, a formal key ceremony MUST be conducted:
+
+**Ceremony Requirements**:
+- **Participants**: Minimum 5 key holders from at least 3 different organizations
+- **Threshold**: 3-of-5 threshold scheme (Shamir's Secret Sharing) — any 3 share holders can reconstruct the key; no fewer can
+- **Hardware**: Air-gapped machines (never connected to network); hardware random number generators (NIST SP 800-90B compliant); tamper-evident bags for share transport
+- **Location**: Physically secure room with access control; no electronic devices beyond ceremony hardware
+
+**Ceremony Procedure**:
+1. **Preparation**: Ceremony coordinator distributes roles; all participants verify identities; ceremony hardware inspected and verified clean
+2. **Entropy Generation**: Hardware RNG generates master entropy on air-gapped machine; entropy quality verified (NIST SP 800-22 statistical tests)
+3. **Key Generation**: Master key derived from entropy using approved KDF (HKDF-SHA256); key shares generated using Shamir's Secret Sharing (3-of-5 threshold)
+4. **Share Distribution**: Each share encrypted to recipient's personal key; shares transferred to tamper-evident bags; each participant verifies their share decrypts correctly
+5. **Reconstruction Verification**: 3 randomly selected participants reconstruct the key to verify correctness; key matches original; reconstruction performed on separate air-gapped machine
+6. **Secure Disposal**: Original entropy and master key securely wiped from ceremony machine; verified via multiple overwrite passes
+7. **Documentation**: Ceremony transcript signed by all participants; video recording stored securely; hash of all artifacts published for transparency
+
+**Post-Ceremony**:
+- Share holders store shares in geographically separate locations
+- Annual liveness check: each share holder confirms possession of their share
+- Share holder departure triggers re-keying ceremony (new shares generated from reconstructed key)
+
+**Ceremony Audit**: An independent observer (not a share holder) must attend and sign the ceremony transcript, attesting that procedures were followed correctly
 
 **Individual Keys**
 
@@ -3184,13 +3303,25 @@ Current cryptographic systems may be vulnerable to future quantum computers:
 - Long-term data protection needs: Exceeds this horizon
 - Action required: Begin planning now for data with long-term sensitivity
 
-**Migration Strategy**
+**Migration Strategy and Timeline**
+
+*Addresses R3-14: Specific milestones required — "within 5 years" does not enable planning.*
 
 - Inventory of cryptographic dependencies
 - Prioritization based on data sensitivity and retention period
 - Hybrid classical/post-quantum approaches during transition
-- Monitoring NIST post-quantum standardization (CRYSTALS-Kyber, CRYSTALS-Dilithium selected)
-- Target: Post-quantum readiness within 5 years for Level 4 data
+- Monitoring NIST post-quantum standardization (ML-KEM/CRYSTALS-Kyber, ML-DSA/CRYSTALS-Dilithium selected)
+
+| Milestone | Target Date | Action |
+|-----------|------------|--------|
+| Cryptographic inventory | 2026 Q4 | Complete inventory of all cryptographic dependencies across all implementations |
+| Hybrid scheme design | 2027 Q2 | Design hybrid classical + post-quantum schemes for Level 4 data; select ML-KEM for key exchange, ML-DSA for signatures |
+| Hybrid pilot | 2027 Q4 | Pilot hybrid schemes for Level 4 data in at least one deployment |
+| Hybrid production | 2028 Q2 | Hybrid schemes mandatory for all Level 4 data |
+| Level 3 migration | 2029 Q2 | Hybrid schemes mandatory for Level 3 data |
+| Full post-quantum | 2030 | Full post-quantum migration for all sensitive data (Level 3+) |
+
+**Acceleration Trigger**: If NIST or equivalent authority announces a credible quantum computing milestone that shortens the threat timeline, the Advisory Board will convene an emergency session to accelerate this timeline. Organizations must be capable of emergency migration within 6 months of trigger notification.
 
 ### III.9.4 Confidential Computing Requirements
 
@@ -3662,34 +3793,85 @@ Individuals choose exactly which attributes to reveal:
 
 Technical implementation uses zero-knowledge proofs (see Section III.9.2) to prove claims without revealing underlying data.
 
+#### Protocol Specification
+
+*Addresses R3-5: Exact protocol specification required for interoperability.*
+
+**Base Protocol**: DIF Presentation Exchange 2.0
+
+All verifiable presentations MUST conform to the Decentralized Identity Foundation (DIF) Presentation Exchange 2.0 specification. This ensures that any two independent implementations can interoperate.
+
+**Presentation Flow**:
+
+1. **Request**: Verifier creates a Presentation Definition specifying:
+   - Required credential types (e.g., `ProtectionStatusCredential`)
+   - Required attributes or predicates (e.g., "age ≥ 18")
+   - Accepted proof formats: `jwt_vp` (JWT-encoded) or `ldp_vp` (Linked Data Proof)
+   - Challenge nonce (minimum 128 bits, cryptographically random)
+   - Domain binding (verifier's DID or URL)
+   - Validity window (default: 5 minutes)
+
+2. **Selection**: Holder's wallet matches available credentials against the Presentation Definition and presents matching options to the holder for approval
+
+3. **Proof Generation**: Holder's wallet constructs a Verifiable Presentation containing:
+   - Selected credentials (or derived ZKP proofs for selective disclosure)
+   - Proof of holder binding (signature over challenge + domain using holder's DID key)
+   - Timestamp (ISO 8601)
+
+4. **Verification**: Verifier checks:
+   - Presentation signature valid against holder's DID
+   - Challenge nonce matches issued nonce (replay protection)
+   - Domain binding matches verifier's identity
+   - Timestamp within validity window
+   - Each credential signature valid against issuer's DID
+   - Each credential not revoked (StatusList2021 check)
+   - Issuer authorized in trust registry for credential type
+
+**Proof Formats**:
+- **Standard presentations**: Linked Data Proofs with Ed25519Signature2020
+- **Selective disclosure**: BBS+ Signatures (BbsBlsSignature2020) enabling attribute-level disclosure
+- **Predicate proofs**: ZKP circuits (see Section III.9.2) for range proofs and set membership
+
+**Error Codes**:
+
+| Code | Meaning | Holder Action |
+|------|---------|---------------|
+| `invalid_challenge` | Nonce mismatch or expired | Re-request presentation |
+| `credential_revoked` | One or more credentials revoked | Contact issuer for re-issuance |
+| `issuer_untrusted` | Issuer not in trust registry | Contact issuer or registry operator |
+| `insufficient_proof` | Required attributes not proven | Provide additional credentials |
+| `domain_mismatch` | Presentation bound to different verifier | Re-create presentation for correct verifier |
+| `expired_presentation` | Timestamp outside validity window | Re-create presentation |
+
 #### Holder Binding
 
 Verifiers must confirm that the person presenting credentials actually controls them:
 
-**Challenge-Response Protocol**
+**Cryptographic Binding (Standard)**
 
-1. Verifier sends random challenge (nonce)
-2. Holder signs challenge with credential private key
+1. Verifier sends random challenge (nonce, minimum 128 bits)
+2. Holder signs challenge + verifier domain with credential private key (Ed25519 or P-256)
 3. Verifier verifies signature against credential public key
 4. Fresh challenge prevents replay of captured presentations
 
 **Biometric Binding (High-Stakes)**
 
-For high-stakes presentations:
+For high-stakes presentations (IAL2+ credentials, resettlement, travel documents):
 
-- Credential contains biometric template
+- Credential contains biometric template (encrypted, accessible only during presentation)
 - Presentation includes live biometric capture
-- Verifier confirms match between template and live capture
+- Verifier confirms match between template and live capture (FAR < 0.01%, FRR < 1%)
 - Prevents credential sharing/theft
+- Biometric data never transmitted to verifier; match computed locally or via ZKP
 
 #### Replay Protection
 
 Presentations are protected against capture and replay:
 
-- Nonces ensure each presentation is unique
-- Timestamps limit validity window (typically 5 minutes)
-- Verifier-specific binding prevents presenting to unintended verifier
-- Single-use presentations where required
+- Nonces ensure each presentation is unique (minimum 128 bits, cryptographically random)
+- Timestamps limit validity window (default 5 minutes, configurable per use case)
+- Verifier-specific domain binding prevents presenting to unintended verifier
+- Single-use presentations required for IAL2+ credentials
 
 ### III.10.5 Credential Revocation
 
@@ -3729,6 +3911,51 @@ Credentials must be revocable when circumstances change:
 - Graceful degradation when cache expired:
   - Accept with flag for post-verification
   - Or reject and request online verification
+
+### III.10.6 Credential Lifecycle Management and Renewal
+
+*Addresses R3-10: Credential renewal proofing requirements must be specified to prevent inconsistent implementation.*
+
+#### Credential Validity Periods
+
+| Credential Type | Default Validity | Renewal Window | Rationale |
+|----------------|-----------------|----------------|-----------|
+| HumanitarianIdentityCredential | 2 years | 60 days before expiry | Identity stable; periodic re-verification |
+| ProtectionStatusCredential | 1 year | 30 days before expiry | Status may change; annual review standard |
+| HumanitarianAssistanceCredential | Per program cycle | End of program cycle | Tied to program enrollment |
+| VulnerabilityAssessmentCredential | 6 months | 30 days before expiry | Vulnerability changes; regular reassessment |
+| ConsentStatusCredential | 1 year | 30 days before expiry | Regular consent refresh opportunity |
+
+#### Renewal Proofing Requirements
+
+Renewal requires less evidence than initial issuance, but the level depends on the original assurance level:
+
+| Original IAL | Renewal Requirement | Rationale |
+|--------------|---------------------|-----------|
+| IAL1 | Biometric match only | Identity already established at basic level |
+| IAL1+ | Biometric match + brief interview | Confirm no significant changes in circumstances |
+| IAL2 | Biometric match + document review (visual inspection, not re-verification) | Documents may have changed; review suffices |
+| IAL2+ | Biometric match + document re-verification against issuer database | High-stakes credentials require maintained assurance |
+| IAL3 | Full re-proofing | Highest assurance level must be maintained through complete re-evaluation |
+
+#### Lifecycle States
+
+Credentials progress through defined states:
+
+1. **Issued**: Active and valid
+2. **Expiring**: Within renewal window; holder notified; credential still valid
+3. **Expired**: Past validity date; no longer accepted for new transactions; grace period of 30 days for renewal without full re-proofing
+4. **Renewed**: New credential issued; previous credential revoked
+5. **Revoked**: Permanently invalidated (see Section III.10.5)
+6. **Suspended**: Temporarily invalid pending investigation; may be reinstated
+
+#### Automatic Notifications
+
+- 60 days before expiry: Initial notification to holder (via wallet app, SMS, or staff outreach)
+- 30 days before expiry: Reminder with nearest renewal location/process
+- 7 days before expiry: Urgent reminder
+- On expiry: Notification that credential has expired; instructions for renewal
+- Staff are notified of upcoming expirations for beneficiaries in their caseload
 
 ---
 
@@ -4671,6 +4898,28 @@ Organizations implementing data dignity MUST comply with:
 | UNHCR Data Protection Policy | 2018 | Refugee data protection | Compliance required for refugee data |
 | Sphere Standards | 2018 | Humanitarian quality | Data practices must support Sphere compliance |
 
+#### Version Pinning and Update Policy
+
+*Addresses R3-13: All referenced standards must be version-pinned to prevent "compliance" from becoming a moving target.*
+
+The following version pins are in effect for this manifesto:
+
+| Standard | Pinned Version | Release Date |
+|----------|---------------|--------------|
+| W3C DID Core | 1.0 | July 2022 |
+| W3C Verifiable Credentials Data Model | 1.1 | March 2022 |
+| W3C DID Resolution | 1.0 | July 2022 |
+| ISO/IEC 27001 | 2022 | October 2022 |
+| ISO/IEC 27701 | 2019 | August 2019 |
+| NIST SP 800-63 | Rev. 3 | June 2017 |
+| OCHA Data Responsibility Guidelines | 2021 | March 2021 |
+| UNHCR Data Protection Policy | 2018 (updated) | May 2018 |
+| Sphere Standards | 2018 | November 2018 |
+| HXL (Humanitarian Exchange Language) | 1.1 | 2016 |
+| UNHCR Registration Data Dictionary | v4.0 | Current |
+
+**Update Policy**: When a new version of a referenced standard is published, implementing organizations have 12 months to update to the new version OR demonstrate compliance with a documented transition plan. The Data Dignity Advisory Board will issue guidance on material changes within 90 days of new standard publication.
+
 ### Recommended Standards
 
 Organizations SHOULD also consider:
@@ -5241,12 +5490,25 @@ Individuals whose data dignity rights are violated must have accessible redress:
 | Standard | Requirement |
 |----------|-------------|
 | Accessibility | Available in local languages; multiple channels; no literacy requirement |
-| Acknowledgment | Within 48 hours |
+| Acknowledgment | Per grievance type (see below) |
 | Investigation | Conducted impartially; complainant informed of process |
-| Resolution | Substantive response within timeline; explanation of outcome |
+| Resolution | Per grievance type (see below); explanation of outcome |
 | Appeal | Right to appeal adverse decisions |
 | Confidentiality | Complainant identity protected unless disclosure necessary |
 | Non-retaliation | No adverse action against complainants |
+
+#### Grievance Type Timelines
+
+*Addresses R3-11: Emergency grievance resolution needed — 14 days is too long when service access is blocked.*
+
+| Grievance Type | Acknowledgment | Resolution Target | Escalation Path |
+|---------------|----------------|-------------------|-----------------|
+| **Service access blocked** (consent/credential glitch preventing aid) | 4 hours | 24 hours | Immediate supervisor override to restore access while investigating |
+| **Data correction (urgent)** (incorrect data affecting eligibility) | 24 hours | 72 hours | DPO review; interim access maintained |
+| **Standard privacy concern** (unauthorized access, unwanted sharing) | 48 hours | 14 days | Normal investigation process |
+| **Systemic issue** (pattern affecting multiple individuals) | 48 hours | 30 days | Advisory Board review; interim mitigations required |
+
+**Critical Rule**: When a grievance involves blocked service access, the individual MUST receive services through manual override while the grievance is being investigated. Service access is never suspended pending grievance resolution.
 
 #### Remedies
 
@@ -6060,6 +6322,23 @@ For offline scenarios, the following DID methods are appropriate:
 - Prioritized sync (critical data first)
 - Resumable transfers
 
+#### Consent Staleness Rules
+
+*Addresses R3-15: After extended offline periods, staff need clear rules on when cached consent is still valid.*
+
+| Offline Duration | Consent Status | Action Required |
+|------------------|---------------|-----------------|
+| <7 days | **Valid** | Normal sync on reconnect; no action required |
+| 7–30 days | **Valid with flag** | Re-confirm consent at next in-person interaction; services continue |
+| 30–90 days | **Degraded** | Re-consent required for Tier 2+ operations; Tier 0 and Tier 1 services continue uninterrupted |
+| >90 days | **Stale** | Full re-consent required; treat as equivalent to new registration for consent purposes; all service tiers require fresh consent except Tier 0 (essential services always unconditional) |
+
+**Implementation Notes**:
+- Edge devices must display staleness status to staff clearly (e.g., "Consent last synced 45 days ago — Tier 2+ re-consent required")
+- Staleness timers begin from last successful sync, not from last consent modification
+- Priority sync of consent records when connectivity is restored
+- These rules apply to consent records only; credential staleness is governed by credential validity periods (Section III.10.6)
+
 ### A.5 Offline Credential Verification
 
 **Cached Verification Data**
@@ -6149,7 +6428,99 @@ For offline scenarios, the following DID methods are appropriate:
 }
 ```
 
-*Additional schemas for health, education, assistance, skills credentials to be defined.*
+### C.3 Humanitarian Assistance Credential
+
+```json
+{
+  "@context": ["https://www.w3.org/2018/credentials/v1", "https://data-dignity.org/credentials/v1"],
+  "type": ["VerifiableCredential", "HumanitarianAssistanceCredential"],
+  "credentialSubject": {
+    "id": "did:key:z6Mk...",
+    "assistanceType": "enum: food|shelter|health|education|livelihood|wash|protection|multi-sector",
+    "programName": "string",
+    "providingOrganization": "DID of organization",
+    "enrollmentDate": "date (ISO 8601)",
+    "lastAssistanceDate": "date (ISO 8601)",
+    "assistanceStatus": "enum: active|completed|suspended|transferred",
+    "householdSize": "integer (optional)",
+    "distributionSite": "string (optional)"
+  }
+}
+```
+
+**Required Fields**: id, assistanceType, providingOrganization, enrollmentDate, assistanceStatus
+**Optional Fields**: programName, lastAssistanceDate, householdSize, distributionSite
+**Constraints**: assistanceType must be from the enumerated list; dates in ISO 8601 format
+
+### C.4 Vulnerability Assessment Credential
+
+```json
+{
+  "@context": ["https://www.w3.org/2018/credentials/v1", "https://data-dignity.org/credentials/v1"],
+  "type": ["VerifiableCredential", "VulnerabilityAssessmentCredential"],
+  "credentialSubject": {
+    "id": "did:key:z6Mk...",
+    "assessmentDate": "date (ISO 8601)",
+    "assessingOrganization": "DID of organization",
+    "vulnerabilityScore": "integer (1-10)",
+    "vulnerabilityCategory": "enum: low|medium|high|critical",
+    "specificNeeds": ["enum: medical|disability|elderly|unaccompanied-minor|gbv-survivor|single-parent|chronic-illness"],
+    "reassessmentDue": "date (ISO 8601)",
+    "assessorId": "string (anonymized staff reference)"
+  }
+}
+```
+
+**Required Fields**: id, assessmentDate, assessingOrganization, vulnerabilityCategory, reassessmentDue
+**Optional Fields**: vulnerabilityScore, specificNeeds, assessorId
+**Constraints**: vulnerabilityScore 1-10; specificNeeds is an array of enumerated values; this credential is Level 3-4 sensitivity and must be handled accordingly
+**Note**: This credential supports selective disclosure — a relying party can verify "vulnerability category is high or critical" without learning specific needs via ZKP
+
+### C.5 Consent Status Credential
+
+```json
+{
+  "@context": ["https://www.w3.org/2018/credentials/v1", "https://data-dignity.org/credentials/v1"],
+  "type": ["VerifiableCredential", "ConsentStatusCredential"],
+  "credentialSubject": {
+    "id": "did:key:z6Mk...",
+    "consentTier": "enum: tier0|tier1|tier2|tier3|tier4",
+    "consentDate": "date (ISO 8601)",
+    "consentMethod": "enum: digital-self|digital-assisted|audio|in-person|paper",
+    "consentLanguage": "ISO 639-1 language code",
+    "customizations": {
+      "healthDataSharing": "enum: allow|deny|not-specified",
+      "crossOrgSharing": "enum: allow|deny|not-specified",
+      "researchUse": "enum: allow|deny|not-specified"
+    },
+    "expiryDate": "date (ISO 8601)",
+    "duressFlags": "integer (0 = no flags)"
+  }
+}
+```
+
+**Required Fields**: id, consentTier, consentDate, consentMethod, consentLanguage
+**Optional Fields**: customizations, expiryDate, duressFlags
+**Constraints**: consentTier must map to the tiered consent model (Section I.4); duressFlags > 0 triggers enhanced review per Section III.7
+
+### C.6 Schema Governance
+
+**Versioning**: All schemas use semantic versioning (MAJOR.MINOR.PATCH). Breaking changes increment MAJOR version.
+
+**Schema Proposal Process**:
+1. Any implementing organization may propose a new schema or schema modification
+2. Proposal submitted to the DAO with rationale and example instances
+3. Technical review by W3C-aligned standards body (30-day review period)
+4. Community comment period (14 days)
+5. Approval by Data Dignity Advisory Board
+6. Published to open schema repository with JSON-LD context definitions
+
+**Deprecation Policy**: Deprecated schemas remain valid for 24 months after deprecation notice. Organizations must migrate to successor schemas within this period.
+
+**Interoperability Mappings**: All schemas include mappings to:
+- UNHCR Registration Data Dictionary v4.0
+- OCHA Humanitarian Exchange Language (HXL) 1.1
+- ISO standards for dates (ISO 8601), countries (ISO 3166-1), and languages (ISO 639-1)
 
 ---
 
@@ -6194,23 +6565,122 @@ For offline scenarios, the following DID methods are appropriate:
 
 ## Appendix F: Reference Architecture
 
-*This appendix provides reference architecture diagrams using C4 model.*
+*This appendix provides reference architecture using the C4 model, addressing the R3-1 gap identified by the Azure Lead and W3C Co-Chair.*
 
 ### F.1 Context Diagram
 
-*System context showing data dignity system in relation to users, external systems, and regulators.*
+The Data Dignity system operates within a broader humanitarian ecosystem:
+
+**External Actors:**
+- **Beneficiaries**: Refugees, IDPs, disaster survivors who own their data and manage consent
+- **Field Staff**: Humanitarian workers who facilitate registration, consent, and service delivery
+- **Organizations**: UNHCR, WFP, ICRC, NGOs operating as data controllers and processors
+- **Regulators**: Data protection authorities, humanitarian coordination bodies (HCT, clusters)
+- **External Systems**: PRIMES, SCOPE, HDX, KOBO (legacy humanitarian platforms)
+
+**System Boundaries:**
+- The Data Dignity Platform sits between beneficiaries and organizational systems
+- All data access from organizations passes through the consent enforcement layer
+- Beneficiary interactions occur through mobile apps, web portals, or staff-assisted interfaces
+- External system integration occurs through standardized APIs (see Appendix B)
+
+**Major Data Flows:**
+1. Registration: Beneficiary → Identity Service → Credential Issuance → Wallet
+2. Consent: Beneficiary → Consent UI → Smart Contract → Policy Engine
+3. Data Access: Organization → API → Consent Check → Data Store → Response
+4. Verification: Relying Party → Presentation Request → ZKP Generation → Verification
+5. Governance: Community → DAO Proposal → Voting → Policy Update
+6. Sync: Edge Device → Hub Server → Cloud Layer (when connectivity available)
 
 ### F.2 Container Diagram
 
-*Major containers: Identity Service, Consent Service, Credential Service, Governance Service, Integration Layer.*
+The platform comprises the following major containers:
+
+| Container | Responsibility | Technology | Scaling |
+|-----------|---------------|------------|---------|
+| **Identity Service** | DID management, credential issuance, key management, biometric enrollment | did:key/did:peer for individuals, did:web for orgs | Horizontal; per-region deployment |
+| **Consent Service** | Consent capture, smart contract execution, policy enforcement, consent history | Hyperledger Fabric or Besu (gas-free) | Per-organization with federation |
+| **Credential Service** | VC issuance, verification, revocation, schema management | W3C VC 1.1, StatusList2021 | Horizontal; cached verification |
+| **Governance Service** | DAO management, voting, proposal lifecycle, transparency reporting | Smart contracts, off-chain voting aggregation | Single instance with regional mirrors |
+| **Data Store** | Encrypted data storage, access control, audit logging | AES-256 encryption, attribute-based access | Per-organization with compartmentalization |
+| **Integration Layer** | APIs for PRIMES, SCOPE, HDX; wrapper/bridge/sidecar patterns | REST/GraphQL APIs, OAuth2/SAML auth | Per-integration |
+| **Offline Sync Engine** | Edge-hub-cloud synchronization, CRDT-based conflict resolution, delta sync | CRDTs, vector clocks, compressed payloads | Per-device and per-hub |
+
+**Trust Boundaries:**
+- **User Device Boundary**: Wallet, keys, consent decisions, cached credentials (beneficiary-controlled)
+- **Organizational Boundary**: Data storage, processing, case management (organization-controlled)
+- **Shared Infrastructure Boundary**: Blockchain, DAO, trust registry, credential schemas (consortium-governed)
+- **Cross-Boundary Protections**: All data crossing boundaries encrypted in transit (TLS 1.3+); consent verification at every boundary crossing; audit logging for all cross-boundary access
 
 ### F.3 Component Diagrams
 
-*Internal components of each container.*
+#### F.3.1 Identity Service Components
+
+| Component | Function | Dependencies |
+|-----------|----------|-------------|
+| DID Manager | Create, update, deactivate DIDs | Key Management |
+| Key Management | Generate, store, rotate, recover keys | HSM (org), Secure Enclave (device) |
+| Biometric Engine | Enrollment, matching, anti-spoofing | Template Store, Liveness Detection |
+| Credential Issuer | Create and sign VCs per schema | DID Manager, Schema Registry |
+| Proofing Engine | IAL assessment, evidence evaluation | Biometric Engine, Document Verification |
+| Document Verification | Inspect, validate identity documents | External verification databases (when available) |
+
+#### F.3.2 Consent Service Components
+
+| Component | Function | Dependencies |
+|-----------|----------|-------------|
+| Consent UI Engine | Multi-modal consent capture (text, audio, video, assisted) | Localization Service |
+| Tier Manager | Map consent choices to data access policies | Policy Engine |
+| Smart Contract Runtime | Execute consent rules on-chain | Blockchain Layer |
+| Policy Engine | Evaluate access requests against consent | Consent Store, Smart Contract Runtime |
+| Consent History | Immutable log of all consent events | Audit Service |
+| Duress Detection | Flag consent interactions for review | Contextual Risk Engine |
+
+#### F.3.3 Governance Service Components
+
+| Component | Function | Dependencies |
+|-----------|----------|-------------|
+| Proposal Manager | Create, review, vote on proposals | Voting Engine |
+| Voting Engine | Multi-modal voting (digital, representative, paper) | Identity Service |
+| Transparency Reporter | Aggregate and publish accountability reports | Data Store, Audit Service |
+| Certification Manager | Assess and certify organizations | Scoring Engine |
 
 ### F.4 Deployment Diagrams
 
-*Deployment options: cloud, hybrid, edge-first.*
+#### F.4.1 Deployment Option A: Hybrid (Recommended)
+
+| Tier | Location | Components | Use Case |
+|------|----------|------------|----------|
+| **Edge** | Field devices (tablets, phones) | Wallet, offline consent, cached credentials, local data collection | Direct beneficiary interaction; offline-capable |
+| **Hub** | Regional servers (on-premise or private cloud) | Identity Service, Consent Service, Data Store, Sync Engine | Regional operations; intermittent connectivity |
+| **Cloud** | Public cloud with confidential computing | Governance Service, Analytics (anonymized), Credential Schema Registry | Global coordination; non-sensitive workloads |
+
+#### F.4.2 Deployment Option B: Fully On-Premise
+
+For organizations with strict data sovereignty requirements (e.g., ICRC cross-front-line operations):
+- All components hosted on organizational infrastructure
+- No public cloud dependency
+- Federation with other organizations via encrypted peer-to-peer protocols
+- Higher infrastructure cost but maximum sovereignty control
+
+#### F.4.3 Deployment Option C: Edge-First
+
+For operations in extremely low-connectivity environments:
+- Maximum functionality on edge devices
+- Hub servers deployed in-country with UPS and satellite backup
+- Cloud tier used only for global coordination when connectivity permits
+- Designed for extended offline periods (30+ days)
+
+#### F.4.4 Decision Framework
+
+| Factor | Option A: Hybrid | Option B: On-Premise | Option C: Edge-First |
+|--------|-----------------|---------------------|---------------------|
+| Connectivity required | Intermittent | Intermittent | Minimal |
+| IT capacity required | Medium | High | Medium |
+| Data sovereignty | Good (regional hubs) | Maximum | Good |
+| Cost | Medium | High | Lower infrastructure, higher device cost |
+| Scalability | High | Limited by hardware | Limited by sync complexity |
+| Recommended for | Most operations | Conflict zones, ICRC | Remote camps, disaster response |
 
 ---
 
@@ -6234,9 +6704,66 @@ For offline scenarios, the following DID methods are appropriate:
 | Intermittent | 256 Kbps burst | Variable | Sync-based operation |
 | Offline | None | N/A | Full offline capability required |
 
-### G.3 Cost Model
+### G.3 Performance Benchmarks
 
-*Cost estimation framework for implementation at different scales.*
+*Addresses R3-2: Performance benchmarks required for implementation validation.*
+
+| Operation | Target Latency | Target Throughput | Conditions |
+|-----------|---------------|-------------------|------------|
+| Credential verification (online) | <500ms p95 | 100/sec per server | Standard hub hardware |
+| Credential verification (offline) | <2s p95 | 10/sec per device | Mobile device with cached keys |
+| Consent modification | <1s p95 | 50/sec per server | Including blockchain anchor |
+| Consent status check | <200ms p95 | 500/sec per server | Cached consent store |
+| Full sync (1,000 records) | <5 minutes | N/A | 256 Kbps connection |
+| Delta sync (50 changes) | <30 seconds | N/A | 256 Kbps connection |
+| Registration (new identity) | <3 minutes | N/A | Including biometric capture |
+| ZKP generation (age proof) | <200ms | N/A | Mobile device |
+| ZKP verification | <50ms | N/A | Any device |
+
+**Validation Requirements:**
+- Benchmarks must be validated through prototype testing before pilot deployment
+- Performance must be measured under realistic conditions (field hardware, actual network conditions)
+- Degraded performance under offline/low-connectivity must be documented
+- Load testing must demonstrate sustained throughput at 2x projected peak usage
+
+### G.4 Cost Model
+
+*Addresses R3-3: Cost visibility required for organizational adoption decisions.*
+
+#### Per-Beneficiary Costs
+
+| Cost Category | Low Estimate | High Estimate | Assumptions |
+|---------------|--------------|---------------|-------------|
+| Per-beneficiary per year (operating) | $2 | $8 | Shared infrastructure, >50K beneficiaries |
+| Per-beneficiary per year (small org) | $5 | $15 | Dedicated infrastructure, <10K beneficiaries |
+
+#### Deployment Costs
+
+| Deployment Scale | Initial Investment | Annual Operating | Assumptions |
+|-----------------|-------------------|-----------------|-------------|
+| Small org (<50K beneficiaries) | $50K–$150K | $100K–$300K | Shared cloud, limited customization |
+| Medium org (50K–500K beneficiaries) | $150K–$500K | $300K–$800K | Hybrid deployment, regional hubs |
+| Large org (>500K beneficiaries) | $500K–$2M | $800K–$3M | Full hybrid with edge, multiple regions |
+
+#### Infrastructure Costs
+
+| Component | Low Estimate | High Estimate | Notes |
+|-----------|--------------|---------------|-------|
+| Cloud infrastructure | $0.50/beneficiary/year | $2/beneficiary/year | Public cloud with confidential computing |
+| Hub server (on-premise) | $5K/hub/year | $20K/hub/year | Including hardware refresh, power, connectivity |
+| Edge devices | $150–$400/device | One-time; 3-year lifecycle | Android tablets or ruggedized phones |
+| HSM (per hub) | $5K–$15K | One-time | Required for organizational key management |
+
+#### Staff and Training Costs
+
+| Category | Cost per Person | Notes |
+|----------|----------------|-------|
+| Initial training (field staff) | $100–$300 | 2-day training including consent facilitation |
+| Initial training (technical staff) | $300–$500 | 5-day training including system administration |
+| Ongoing training (annual refresh) | $50–$150 | Half-day annual refresh |
+| Help desk (per 10K beneficiaries) | 0.5 FTE | Shared across operations |
+
+**Cost Model Validation**: These estimates are preliminary and must be validated through pilot deployments. Actual costs will vary significantly based on context, existing infrastructure, and organizational capacity. Organizations should develop detailed cost models based on their specific deployment scenarios before committing to implementation.
 
 ---
 
@@ -6249,7 +6776,8 @@ For offline scenarios, the following DID methods are appropriate:
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0 | October 11, 2024 | Initial manifesto |
-| 2.0 | [Date] | Comprehensive revision based on expert roundtable; added threat model, offline architecture, identity proofing, consent UX requirements, governance integration |
+| 2.0 | February 1, 2026 | Comprehensive revision based on expert roundtable; added threat model, offline architecture, identity proofing, consent UX requirements, governance integration |
+| 2.1 | February 2, 2026 | Round 3 revisions: reference architecture diagrams (R3-1), performance benchmarks (R3-2), cost model (R3-3), expanded credential schemas (R3-4), verifiable presentation protocol spec (R3-5), key ceremony procedures (R3-6), ZKP auditor ecosystem (R3-7), duress detection thresholds (R3-8), classification elevation authority (R3-9), credential lifecycle management (R3-10), emergency grievance timelines (R3-11), trauma-informed consent UX (R3-12), standard version pinning (R3-13), post-quantum migration timeline (R3-14), sync staleness rules (R3-15) |
 
 ## Feedback
 
