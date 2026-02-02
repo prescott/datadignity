@@ -2686,7 +2686,7 @@ Patterns in consent behavior that may indicate duress:
 
 *Addresses R3-8: Specific thresholds required for consistent duress flagging across staff and operations.*
 
-Contextual and behavioral indicators are assigned weights for systematic evaluation:
+The contextual risk indicators and behavioral indicators described above are combined into a single weighted scoring system for consistent, systematic evaluation. Staff apply this scoring at the point of consent interaction:
 
 | Indicator | Weight | Notes |
 |-----------|--------|-------|
@@ -3234,7 +3234,7 @@ For organizational or shared keys, a formal key ceremony MUST be conducted:
 
 **Ceremony Requirements**:
 - **Participants**: Minimum 5 key holders from at least 3 different organizations
-- **Threshold**: 3-of-5 threshold scheme (Shamir's Secret Sharing) — any 3 share holders can reconstruct the key; no fewer can
+- **Threshold**: 3-of-5 threshold scheme (Shamir's Secret Sharing) — any 3 share holders can reconstruct the key; no fewer can. Note: this higher threshold (vs. the 2-of-3 used for individual key recovery in Section III.10.3) reflects the greater security requirements for organizational master keys, which protect entire populations rather than individual credentials
 - **Hardware**: Air-gapped machines (never connected to network); hardware random number generators (NIST SP 800-90B compliant); tamper-evident bags for share transport
 - **Location**: Physically secure room with access control; no electronic devices beyond ceremony hardware
 
@@ -5503,7 +5503,7 @@ Individuals whose data dignity rights are violated must have accessible redress:
 
 | Grievance Type | Acknowledgment | Resolution Target | Escalation Path |
 |---------------|----------------|-------------------|-----------------|
-| **Service access blocked** (consent/credential glitch preventing aid) | 4 hours | 24 hours | Immediate supervisor override to restore access while investigating |
+| **Service access blocked** (consent or credential error preventing aid delivery) | 4 hours | 24 hours | Immediate supervisor override to restore access while investigating |
 | **Data correction (urgent)** (incorrect data affecting eligibility) | 24 hours | 72 hours | DPO review; interim access maintained |
 | **Standard privacy concern** (unauthorized access, unwanted sharing) | 48 hours | 14 days | Normal investigation process |
 | **Systemic issue** (pattern affecting multiple individuals) | 48 hours | 30 days | Advisory Board review; interim mitigations required |
@@ -6335,7 +6335,7 @@ For offline scenarios, the following DID methods are appropriate:
 
 **Implementation Notes**:
 - Edge devices must display staleness status to staff clearly (e.g., "Consent last synced 45 days ago — Tier 2+ re-consent required")
-- Staleness timers begin from last successful sync, not from last consent modification
+- "Offline Duration" in the table above is measured from the edge device's last successful sync with the hub or cloud tier — not from the last consent modification or last user interaction
 - Priority sync of consent records when connectivity is restored
 - These rules apply to consent records only; credential staleness is governed by credential validity periods (Section III.10.6)
 
@@ -6511,8 +6511,8 @@ For offline scenarios, the following DID methods are appropriate:
 1. Any implementing organization may propose a new schema or schema modification
 2. Proposal submitted to the DAO with rationale and example instances
 3. Technical review by W3C-aligned standards body (30-day review period)
-4. Community comment period (14 days)
-5. Approval by Data Dignity Advisory Board
+4. Community comment period (14 days), including DAO community input per Section III.11
+5. Approval by Data Dignity Advisory Board (incorporating DAO advisory recommendations)
 6. Published to open schema repository with JSON-LD context definitions
 
 **Deprecation Policy**: Deprecated schemas remain valid for 24 months after deprecation notice. Organizations must migrate to successor schemas within this period.
@@ -6605,6 +6605,10 @@ The platform comprises the following major containers:
 | **Data Store** | Encrypted data storage, access control, audit logging | AES-256 encryption, attribute-based access | Per-organization with compartmentalization |
 | **Integration Layer** | APIs for PRIMES, SCOPE, HDX; wrapper/bridge/sidecar patterns | REST/GraphQL APIs, OAuth2/SAML auth | Per-integration |
 | **Offline Sync Engine** | Edge-hub-cloud synchronization, CRDT-based conflict resolution, delta sync | CRDTs, vector clocks, compressed payloads | Per-device and per-hub |
+
+**Cross-Cutting Concerns** (embedded within each container, not standalone services):
+- **Audit Logging**: Every container writes tamper-evident audit logs; logs are aggregated for transparency reporting
+- **Localization**: Multi-language support embedded in all user-facing components (Consent Service, Governance Service)
 
 **Trust Boundaries:**
 - **User Device Boundary**: Wallet, keys, consent decisions, cached credentials (beneficiary-controlled)
@@ -6712,13 +6716,13 @@ For operations in extremely low-connectivity environments:
 |-----------|---------------|-------------------|------------|
 | Credential verification (online) | <500ms p95 | 100/sec per server | Standard hub hardware |
 | Credential verification (offline) | <2s p95 | 10/sec per device | Mobile device with cached keys |
-| Consent modification | <1s p95 | 50/sec per server | Including blockchain anchor |
+| Consent modification | <3s p95 | 50/sec per server | Including permissioned blockchain consensus |
 | Consent status check | <200ms p95 | 500/sec per server | Cached consent store |
 | Full sync (1,000 records) | <5 minutes | N/A | 256 Kbps connection |
 | Delta sync (50 changes) | <30 seconds | N/A | 256 Kbps connection |
 | Registration (new identity) | <3 minutes | N/A | Including biometric capture |
-| ZKP generation (age proof) | <200ms | N/A | Mobile device |
-| ZKP verification | <50ms | N/A | Any device |
+| ZKP generation (age proof, Bulletproofs) | <500ms | N/A | Mobile device; varies by proof scheme |
+| ZKP verification | <50ms | N/A | Any device (Bulletproofs); Groth16 ~10ms |
 
 **Validation Requirements:**
 - Benchmarks must be validated through prototype testing before pilot deployment
@@ -6739,11 +6743,11 @@ For operations in extremely low-connectivity environments:
 
 #### Deployment Costs
 
-| Deployment Scale | Initial Investment | Annual Operating | Assumptions |
-|-----------------|-------------------|-----------------|-------------|
-| Small org (<50K beneficiaries) | $50K–$150K | $100K–$300K | Shared cloud, limited customization |
-| Medium org (50K–500K beneficiaries) | $150K–$500K | $300K–$800K | Hybrid deployment, regional hubs |
-| Large org (>500K beneficiaries) | $500K–$2M | $800K–$3M | Full hybrid with edge, multiple regions |
+| Deployment Scale | Initial Investment | Annual Operating | Deployment Option (Appendix F) | Assumptions |
+|-----------------|-------------------|-----------------|-------------------------------|-------------|
+| Small org (<50K beneficiaries) | $50K–$150K | $100K–$300K | Option A (Hybrid) or C (Edge-First) | Shared cloud, limited customization |
+| Medium org (50K–500K beneficiaries) | $150K–$500K | $300K–$800K | Option A (Hybrid) | Regional hubs, partial on-premise |
+| Large org (>500K beneficiaries) | $500K–$2M | $800K–$3M | Option A (Hybrid) or B (On-Premise) | Full hybrid with edge, multiple regions |
 
 #### Infrastructure Costs
 
