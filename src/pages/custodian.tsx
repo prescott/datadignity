@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
+import { User } from '@/types/user'
 
 interface Grant {
   id: string
@@ -23,7 +24,7 @@ export default function CustodianDashboard() {
   const [grants, setGrants] = useState<Grant[]>([])
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [loading, setLoading] = useState(true)
-  const [user, setUser] = useState<any>(null)
+  const [user, setUser] = useState<User | null>(null)
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user')
